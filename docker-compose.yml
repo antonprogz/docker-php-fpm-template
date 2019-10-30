@@ -1,0 +1,32 @@
+version: '3.7'
+services:
+  php-fpm:
+    image: php:7.2-fpm
+    user: ${uid}:${gid}
+    volumes:
+      - type: bind
+        source: ./
+        target: /app
+  web:
+    image: nginx:latest
+    ports:
+      - "8080:80"
+    volumes:
+      - type: bind
+        source: ./
+        target: /app
+      - type: bind
+        source: ./docker/web/default.conf
+        target: /etc/nginx/conf.d/default.conf
+    links:
+      - php-fpm
+  php-cli:
+    build:
+      context: ./docker/php-cli
+    volumes:
+      - type: bind
+        source: ./
+        target: /home/hostuser/app
+    environment:
+      UID: ${uid}
+      GID: ${gid}
