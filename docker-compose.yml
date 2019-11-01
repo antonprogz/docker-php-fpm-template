@@ -1,12 +1,16 @@
 version: '3.7'
 services:
   php-fpm:
-    image: php:7.2-fpm
+    build:
+      context: ./docker/web
     user: ${uid}:${gid}
     volumes:
       - type: bind
         source: ./
         target: /app
+    environment:
+      XDEBUG_CONFIG: remote_enable=1 remote_mode=req remote_host=${ip} remote_port=9000 idekey=phpstorm remote_connect_back=0
+      PHP_IDE_CONFIG: "serverName=docker"
   web:
     image: nginx:latest
     ports:
